@@ -7,7 +7,7 @@ var app = express.createServer();
 
 // Database
 
-mongoose.connect('mongodb://localhost/ecomm_database');
+mongoose.connect('mongodb://localhost/geosocial_database');
 
 // Config
 
@@ -24,79 +24,79 @@ app.configure(function () {
   var Schema = mongoose.Schema;
 
 
-   var Product = new Schema({  
-    title: { type: String, required: true },  
-    description: { type: String, required: true },  
-    style: { type: String, unique: true },  
-    modified: { type: Date, default: Date.now }
+   var Post = new Schema({  
+    texto: { type: String, required: true },  
+    latitude: { type: String, required: true },  
+    longitude: { type: String, required: true },  
+    created: { type: Date, default: Date.now }
 	});
 
  
-  var ProductModel = mongoose.model('Product', Product);  
+  var PostModel = mongoose.model('Post', Post);  
 
 app.get('/api', function (req, res) {
   res.send('Ecomm API is running');
 });
 
-app.get('/api/products', function (req, res){
-  return ProductModel.find(function (err, products) {
+app.get('/posts', function (req, res){
+  return PostModel.find(function (err, Posts) {
     if (!err) {
-      return res.send(products);
+      return res.send(Posts);
     } else {
       return console.log(err);
     }
   });
 });
 
-app.post('/api/products', function (req, res){
-  var product;
+app.post('/posts', function (req, res){
+  var post;
   console.log("POST: ");
   console.log(req.body);
-  product = new ProductModel({
-    title: req.body.title,
-    description: req.body.description,
-    style: req.body.style,
+  post = new PostModel({
+    texto: req.body.texto,
+    latitude: req.body.latitude,
+    longitude: req.body.longitude
   });
-  product.save(function (err) {
+  post.save(function (err) {
     if (!err) {
       return console.log("created");
     } else {
       return console.log(err);
     }
   });
-  return res.send(product);
+  return res.send(post);
 });
 
 
-app.get('/api/products/:id', function (req, res){
-  return ProductModel.findById(req.params.id, function (err, product) {
+app.get('/posts/:id', function (req, res){
+  return PostModel.findById(req.params.id, function (err, post) {
     if (!err) {
-      return res.send(product);
+      return res.send(post);
     } else {
       return console.log(err);
     }
   });
 });
 
-app.put('/api/products/:id', function (req, res){
-  return ProductModel.findById(req.params.id, function (err, product) {
-    product.title = req.body.title;
-    product.description = req.body.description;
-    product.style = req.body.style;
-    return product.save(function (err) {
+app.put('/posts/:id', function (req, res){
+  return PostModel.findById(req.params.id, function (err, post) {
+    post.texto = req.body.texto;
+    post.latitude = req.body.latitude;
+    post.longitude = req.body.longitude;
+    return Post.save(function (err) {
       if (!err) {
         console.log("updated");
       } else {
         console.log(err);
       }
-      return res.send(product);
+      return res.send(Post);
     });
   });
 });
 
-app.delete('/api/products/:id', function (req, res){
-  return ProductModel.findById(req.params.id, function (err, product) {
-    return product.remove(function (err) {
+app.delete('/posts/:id', function (req, res){
+  return PostModel.findById(req.params.id, function (err, post) {
+    return post.remove(function (err) {
       if (!err) {
         console.log("removed");
         return res.send('');
